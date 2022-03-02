@@ -33,9 +33,8 @@ sources.forEach(function (source) {
         })
     })
 })
-const server = app.listen(8081, function () {
+const server = app.listen(process.env.PORT, function () {
     let host = server.address().address
-    host = "localhost"
     const port = server.address().port
 
     console.log("Listening at https://%s:%s", host, port)

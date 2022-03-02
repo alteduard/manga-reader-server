@@ -1,6 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.x"
+  },
   "description": "simple server that uses webscraping to get manga and manwha from other sources",
   "main": "index.js",
   "type": "module",
