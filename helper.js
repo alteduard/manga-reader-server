@@ -4,4 +4,4 @@ async function getData(url) {
   return response.data;
 }
 
-export default getData;
+export { getData };

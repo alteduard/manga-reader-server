@@ -1,6 +1,8 @@
-import getData from '../helper.js'
+import {getData} from '../helper.js';
 import cheerio from 'cheerio'
-class reaaperScans {
+import puppeteer from 'puppeteer'
+
+class reaperScans {
     constructor() {
         this.name = 'reaperscans';
         this.baseUrl = 'https://www.reaperscans.com/'
@@ -99,4 +101,121 @@ class reaaperScans {
     }
 
 }
-export default reaaperScans;
+class mangaPill {
+    constructor() {
+        this.name = 'mangapill';
+        this.baseUrl = 'https://mangapill.com/'
+        this.searchUrl = {
+            before: 'search?q=',
+            after: ''
+        }
+        this.functions = [
+            {
+                functionName: 'search',
+                function: this.search,
+                functionParams: ["query"]
+            },
+            {
+                functionName: 'getChapters',
+                function: this.getChapters,
+                functionParams: ["link"]
+
+            },
+            {
+                functionName: 'getContent',
+                function: this.getContent,
+                functionParams: ["link"]
+            }
+        ]
+    }
+    async search(query, context = this) {
+        query = query.replace(/ /g, '+');
+        let url = context.baseUrl + context.searchUrl.before + query + context.searchUrl.after;
+        const browser = await puppeteer.launch({headless: true});
+        const page = await browser.newPage();
+        await page.goto(url);
+        const results = await page.evaluate(()=>{
+            let res = []
+            let divv = document.querySelector("body > div.container > div.my-3.grid.justify-between.gap-3.grid-cols-2.md\\:grid-cols-4.lg\\:grid-cols-8").children
+            for (var i = 0; i < divv.length; i++) {
+                let child = divv[i];
+                let image = child.querySelector("img").src
+                let title = child.getElementsByClassName("block text-xs font-bold line-clamp-2")[0].innerText
+                let link = child.querySelector("a").href
+                res.push({
+                    title: title,
+                    link: link,
+                    image: image
+                })
+            }
+            return res
+
+        })
+        await browser.close()
+        if (results.length == 0){
+            results.push({
+                title: "No results found",
+                link: "",
+                image: ""
+            })
+        }
+        return results;
+    }
+    async getChapters(link, context = this) {
+        const browser = await puppeteer.launch({headless: true});
+        const page = await browser.newPage();
+        try {
+        await page.goto(link);
+        const results = await page.evaluate(()=>{
+            let res = []
+            let divv = document.querySelector("#chapters > div").children
+            for (var i = 0; i < divv.length; i++) {
+                let child = divv[i];
+                res.push({
+                    title: child.innerText,
+                    link: child.href
+                })
+            }
+            return res
+
+        }) }
+        catch (e) {
+            return {
+                title: "No chapters found",
+                link: ""
+            }
+        }
+        await browser.close()
+        if (results.length == 0){
+            results.push({
+                title: "No results found",
+                link: "",
+            })
+        }
+        return results;
+    }
+    async getContent(link){
+        const browser = await puppeteer.launch({headless: true});
+        const page = await browser.newPage();
+        await page.goto(link, {waitUntil: 'networkidle2'});
+        const results = await page.evaluate(()=>{
+
+            let pages = []
+            let title = document.getElementById("name").innerText
+            let divv = document.getElementsByClassName("js-page")
+            for (var i = 0; i < divv.length; i++) {
+                let child = divv[i];
+                pages.push(child.getAttribute("data-src"))
+            }
+            return {
+                pages: pages,
+                title: title
+            }
+
+        })
+        await browser.close()
+        return results;
+    }
+
+}
+export{mangaPill, reaperScans};

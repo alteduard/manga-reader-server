@@ -1,10 +1,10 @@
 import express from 'express';
 import helmet from 'helmet';
 
-import reaperScans from "./Sources/mangasources.js"
+import {reaperScans, mangaPill} from "./Sources/mangasources.js"
 
 
-const sources = [new reaperScans()];
+const sources = [new reaperScans(), new mangaPill()];
 
 const app = express()
 app.use(helmet());
@@ -34,7 +34,8 @@ sources.forEach(function (source) {
     })
 })
 const server = app.listen(8081, function () {
-    const host = server.address().address
+    let host = server.address().address
+    host = "localhost"
     const port = server.address().port
 
     console.log("Listening at https://%s:%s", host, port)

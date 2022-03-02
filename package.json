@@ -13,9 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-eval": "^0.1.5",
     "axios": "^0.26.0",
     "cheerio": "^1.0.0-rc.10",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
+    "puppeteer": "^13.4.0"
   }
 }
