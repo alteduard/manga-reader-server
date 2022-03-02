@@ -131,7 +131,11 @@ class mangaPill {
     async search(query, context = this) {
         query = query.replace(/ /g, '+');
         let url = context.baseUrl + context.searchUrl.before + query + context.searchUrl.after;
-        const browser = await puppeteer.launch({headless: true});
+        const browser = await puppeteer.launch({headless: true, args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage'
+            ]});
         const page = await browser.newPage();
         await page.goto(url);
         const results = await page.evaluate(()=>{
@@ -162,7 +166,11 @@ class mangaPill {
         return results;
     }
     async getChapters(link, context = this) {
-        const browser = await puppeteer.launch({headless: true});
+        const browser = await puppeteer.launch({headless: true, args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage'
+            ]});
         const page = await browser.newPage();
         try {
         await page.goto(link);
@@ -195,7 +203,11 @@ class mangaPill {
         return results;
     }
     async getContent(link){
-        const browser = await puppeteer.launch({headless: true});
+        const browser = await puppeteer.launch({headless: true, args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage'
+            ]});
         const page = await browser.newPage();
         await page.goto(link);
         const results = await page.evaluate(()=>{
