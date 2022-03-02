@@ -197,7 +197,7 @@ class mangaPill {
     async getContent(link){
         const browser = await puppeteer.launch({headless: true});
         const page = await browser.newPage();
-        await page.goto(link, {waitUntil: 'networkidle2'});
+        await page.goto(link);
         const results = await page.evaluate(()=>{
 
             let pages = []
